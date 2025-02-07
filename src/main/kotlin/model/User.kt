@@ -1,9 +1,13 @@
 package com.example.model
 
-data class User(
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class User (
     val id: Int,
     val username: String,
     val email: String,
-    val passwordHash: String,
-    val photoPath: String? = null // Фото необязательно
+    val password: String,
+    val avatar: String,
+    val authToken: String? = null
 )

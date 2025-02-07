@@ -30,6 +30,7 @@ dependencies {
     // serialization
     implementation(libs.ktor.server.content.negotiation)              //
     implementation(libs.ktor.serialization.kotlinx.json)              //
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     // JWT
     implementation(libs.ktor.server.auth)                             //
     implementation(libs.ktor.server.auth.jwt)                         //
@@ -40,6 +41,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:0.58.0")
     implementation("org.postgresql:postgresql:42.7.2")                //
     implementation("com.zaxxer:HikariCP:6.2.0")
+    implementation("at.favre.lib:bcrypt:0.10.2")
 }
 
 //tasks.create("stage"){
