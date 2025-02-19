@@ -13,13 +13,15 @@ object DatabaseFactory {
 
     fun init(){
         Database.connect(hikari())
-
+        transaction {
+            SchemaUtils.create(UserTable)
+        }
     }
 
     private fun hikari(): HikariDataSource{
         val config = HikariConfig()
         config.driverClassName = "org.postgresql.Driver"
-        config.jdbcUrl = "jdbc:postgresql://localhost:5432/yurtok?user=postgres"
+        config.jdbcUrl = "jdbc:postgresql://localhost:5432/postgres?user=postgres"
         config.password = "Nikita0110!"
         config.maximumPoolSize = 3
         config.isAutoCommit = false

@@ -29,7 +29,8 @@ dependencies {
     implementation("commons-codec:commons-codec:1.15")                // Для хеширования паролей
     // serialization
     implementation(libs.ktor.server.content.negotiation)              //
-    implementation(libs.ktor.serialization.kotlinx.json)              //
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.serialization.gson)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     // JWT
     implementation(libs.ktor.server.auth)                             //
@@ -38,7 +39,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:0.58.0")       //
     implementation("org.jetbrains.exposed:exposed-dao:0.58.0")        //
     implementation("org.jetbrains.exposed:exposed-jdbc:0.58.0")       //
-    implementation("org.jetbrains.exposed:exposed-java-time:0.58.0")
+    //implementation("org.jetbrains.exposed:exposed-java-time:0.58.0")
     implementation("org.postgresql:postgresql:42.7.2")                //
     implementation("com.zaxxer:HikariCP:6.2.0")
     implementation("at.favre.lib:bcrypt:0.10.2")

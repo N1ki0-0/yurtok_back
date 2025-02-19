@@ -3,6 +3,7 @@ package com.example.service
 import com.example.db.DatabaseFactory.dbQuery
 import com.example.db.UserTable
 import com.example.model.User
+import com.example.security.hash
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
 
@@ -12,7 +13,7 @@ class UserServiceImpl : UserService {
         dbQuery{
             statement = UserTable.insert {
                 it[email] = params.email
-                it[password] = params.password
+                it[password] = hash(params.password)
                 it[username] = params.username
                 it[avatar] = params.avatar
             }

@@ -9,5 +9,5 @@ data class User (
     val email: String,
     val password: String,
     val avatar: String,
-    val authToken: String? = null
+    var authToken: String? = null
 )
