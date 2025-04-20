@@ -4,34 +4,38 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 
-class JwtConfig private constructor(secret: String){
+// Класс для настройки JWT
+class JwtConfig private constructor(secret: String) {
+    private val algorithm = Algorithm.HMAC256(secret) // Алгоритм HMAC256 с секретом
 
-    private val algorithm = Algorithm.HMAC256(secret)
-
+    // Верификатор токена (проверяет подпись, issuer и audience)
     val verifier: JWTVerifier = JWT
         .require(algorithm)
         .withIssuer(ISSUER)
         .withAudience(AUDIENCE)
         .build()
 
+    // Создание JWT-токена с ID пользователя
     fun createAccessToken(id: Int): String = JWT
         .create()
-        .withIssuer(ISSUER)
-        .withAudience(AUDIENCE)
-        .withClaim(CLAIM, id)
-        .sign(algorithm)
+        .withIssuer(ISSUER) // Указание издателя
+        .withAudience(AUDIENCE) // Указание аудитории
+        .withClaim(CLAIM, id) // Добавление claim (ID пользователя)
+        .sign(algorithm) // Подпись токена
 
-    companion object{
-        private const val ISSUER = "YURTOK"
-        private const val AUDIENCE = "YURTOK"
-        const val CLAIM = "id"
+    companion object {
+        private const val ISSUER = "YURTOK" // Издатель токена
+        private const val AUDIENCE = "YURTOK" // Аудитория
+        const val CLAIM = "id" // Название claim для хранения ID
 
+        // Экземпляр JwtConfig (инициализируется через initialize)
         lateinit var instance: JwtConfig
             private set
 
-        fun initialize(secret: String){
+        // Инициализация JwtConfig с секретным ключом (вызывается один раз)
+        fun initialize(secret: String) {
             synchronized(this) {
-                if(!this::instance.isInitialized){
+                if (!this::instance.isInitialized) {
                     instance = JwtConfig(secret)
                 }
             }

@@ -14,9 +14,7 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-repositories {
-    mavenCentral()
-}
+
 
 dependencies {
     implementation(libs.ktor.server.core)                             //
@@ -36,15 +34,22 @@ dependencies {
     implementation(libs.ktor.server.auth)                             //
     implementation(libs.ktor.server.auth.jwt)                         //
     //Postgresql
-    implementation("org.jetbrains.exposed:exposed-core:0.58.0")       //
-    implementation("org.jetbrains.exposed:exposed-dao:0.58.0")        //
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.58.0")       //
-    //implementation("org.jetbrains.exposed:exposed-java-time:0.58.0")
+    implementation("org.jetbrains.exposed:exposed-core:0.61.0")       //
+    implementation("org.jetbrains.exposed:exposed-dao:0.61.0")        //
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.61.0")       //
+    implementation("org.jetbrains.exposed:exposed-java-time:0.61.0")
+
+    //Postgresql
     implementation("org.postgresql:postgresql:42.7.2")                //
-    implementation("com.zaxxer:HikariCP:6.2.0")
+    implementation("com.zaxxer:HikariCP:6.3.0")
     implementation("at.favre.lib:bcrypt:0.10.2")
+    implementation("io.ktor:ktor-server-resources:3.1.2")
+
 }
 
+repositories {
+    mavenCentral()
+}
 //tasks.create("stage"){
 //    dependsOn("installDist")
 //}

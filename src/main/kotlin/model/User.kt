@@ -8,6 +8,6 @@ data class User (
     val username: String,
     val email: String,
     val password: String,
-    val avatar: String,
+    val avatar: String? = null,
     var authToken: String? = null
 )

@@ -7,6 +7,6 @@ object UserTable: Table("users") {
     val username = varchar("username", 50)
     val email = varchar("email", 100)
     val password = varchar("password", 255)
-    val avatar = text("avatar")
+    val avatar = varchar("avatar", 255)
     override val primaryKey = PrimaryKey(id)
 }
