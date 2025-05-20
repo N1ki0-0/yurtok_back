@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Vacancy(
     val id: Int,
-    val icon: String,
+    val icon: String?,
     val name: String,
     val serviceType: String,
     val serviceSubType: String,

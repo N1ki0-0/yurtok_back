@@ -9,7 +9,7 @@ fun Application.configureSecurity() {
     // Инициализация JWT с секретным ключом
     JwtConfig.initialize("e9d9578c-5b22-4acb-b412-18d8a8af24c9!MySuperSecret123")
     install(Authentication) { // Установка аутентификации
-        jwt { // Настройка JWT
+        jwt() { // Настройка JWT
             verifier(JwtConfig.instance.verifier) // Верификатор токена
             validate { // Проверка токена
                 val claim = it.payload.getClaim(JwtConfig.CLAIM).asInt() // Получение ID из токена

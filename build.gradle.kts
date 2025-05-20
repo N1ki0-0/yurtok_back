@@ -44,6 +44,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:6.3.0")
     implementation("at.favre.lib:bcrypt:0.10.2")
     implementation("io.ktor:ktor-server-resources:3.1.2")
+    //implementation("io.ktor:ktor-server-status-pages:3.1.2")
 
 }
 

@@ -1,5 +1,6 @@
 package com.example.repository
 
+import com.example.model.User
 import com.example.security.JwtConfig
 import com.example.security.hash
 import com.example.service.CreateUserParams
@@ -46,5 +47,9 @@ class UserRepositoryImpl(
     // Проверка существования email в БД
     private suspend fun isEmailExist(email: String): Boolean {
         return userService.findUserByEmail(email) != null
+    }
+
+    override suspend fun findUserById(id: Int): User? {
+        return userService.findUserById(id)
     }
 }

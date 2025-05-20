@@ -8,7 +8,7 @@ data class CreateUserParams(
     val username: String, // Имя пользователя
     val email: String, // Email
     val password: String, // Пароль
-    val avatar: String // Ссылка на аватар
+    val avatar: String? // Ссылка на аватар
 )
 
 // DTO для входа пользователя

@@ -4,6 +4,7 @@ import com.example.db.ApplicationTable
 import com.example.db.DatabaseFactory.dbQuery
 import com.example.db.FavoriteTable
 import com.example.db.VacancyTable
+import com.example.db.VacancyTable.icon
 import com.example.model.Application
 import com.example.model.Vacancy
 import kotlinx.serialization.json.Json
@@ -13,6 +14,12 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.or
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
+import org.jetbrains.exposed.sql.lowerCase
+import org.jetbrains.exposed.sql.update
+import java.time.LocalDateTime
+import kotlin.random.Random
 
 
 class VacancyServiceImpl: VacancyService {
@@ -48,7 +55,7 @@ class VacancyServiceImpl: VacancyService {
             .map { row ->
                 Vacancy(
                     id = row[VacancyTable.id],
-                    icon = row[VacancyTable.icon],
+                    icon = row[VacancyTable.icon].toString(),
                     name = row[VacancyTable.name],
                     serviceType = row[VacancyTable.serviceType],
                     serviceSubType = row[VacancyTable.serviceSubType],
@@ -67,9 +74,60 @@ class VacancyServiceImpl: VacancyService {
             }.singleOrNull()
     }
 
+    override suspend fun getAllVacancies(): List<Vacancy> = dbQuery {
+        VacancyTable
+            .selectAll()
+            .map { row ->
+                Vacancy(
+                    id = row[VacancyTable.id],
+                    name = row[VacancyTable.name],
+                    serviceType = row[VacancyTable.serviceType],
+                    serviceSubType = row[VacancyTable.serviceSubType],
+                    rating = row[VacancyTable.rating],
+                    address = row[VacancyTable.address],
+                    experienceYears = row[VacancyTable.experienceYears],
+                    needsEmployment = row[VacancyTable.needsEmployment],
+                    freeConsultation = row[VacancyTable.freeConsultation],
+                    workDays = row[VacancyTable.workDays],
+                    description = row[VacancyTable.description],
+                    email = row[VacancyTable.email],
+                    phone = row[VacancyTable.phone],
+                    priceList = Json.decodeFromString(row[VacancyTable.priceList]),
+                    tags = Json.decodeFromString(row[VacancyTable.tags]),
+                    icon = row[VacancyTable.icon]
+                )
+            }
+    }
+
+    override suspend fun searchVacancies(query: String): List<Vacancy> = dbQuery{
+        VacancyTable.selectAll().where{
+            (VacancyTable.name.lowerCase() like "%${query.lowercase()}%") or (VacancyTable.description.lowerCase() like "%${query.lowercase()}%")
+        }.map { row ->
+            Vacancy(
+                id = row[VacancyTable.id],
+                name = row[VacancyTable.name],
+                serviceType = row[VacancyTable.serviceType],
+                serviceSubType = row[VacancyTable.serviceSubType],
+                rating = row[VacancyTable.rating],
+                address = row[VacancyTable.address],
+                experienceYears = row[VacancyTable.experienceYears],
+                needsEmployment = row[VacancyTable.needsEmployment],
+                freeConsultation = row[VacancyTable.freeConsultation],
+                workDays = row[VacancyTable.workDays],
+                description = row[VacancyTable.description],
+                email = row[VacancyTable.email],
+                phone = row[VacancyTable.phone],
+                priceList = Json.decodeFromString(row[VacancyTable.priceList]),
+                tags = Json.decodeFromString(row[VacancyTable.tags]),
+                icon = row[VacancyTable.icon]
+            )
+        }
+    }
+
     override suspend fun addToFavorites(userId: Int, vacancyId: Int) {
         dbQuery {
             FavoriteTable.insert {
+
                 it[FavoriteTable.userId] = userId
                 it[FavoriteTable.vacancyId] = vacancyId
             }
@@ -94,28 +152,54 @@ class VacancyServiceImpl: VacancyService {
 *Авто установка состояния статуса пока не работает
 *Удаление после 7 дней как была добавлена (для тестов конечно меньше)
 * */
-    override suspend fun applyToVacancy(userId: Int, vacancyId: Int, message: String?) {
-        dbQuery {
-            ApplicationTable.insert {
-                it[ApplicationTable.userId] = userId
-                it[ApplicationTable.vacancyId] = vacancyId
-                it[ApplicationTable.message] = message
-            }
+override suspend fun applyToVacancy(userId: Int, vacancyId: Int, message: String?) {
+    dbQuery {
+        ApplicationTable.insert {
+            it[ApplicationTable.userId] = userId
+            it[ApplicationTable.vacancyId] = vacancyId
+            it[ApplicationTable.message] = message
         }
     }
+}
 
-    // Получить отклики пользователя
+    // Получить все отклики пользователя
     override suspend fun getApplications(userId: Int): List<Application> = dbQuery {
         ApplicationTable
             .selectAll().where { ApplicationTable.userId eq userId }
             .map { row ->
                 Application(
                     id = row[ApplicationTable.id],
+                    userId = row[ApplicationTable.userId],
                     vacancyId = row[ApplicationTable.vacancyId],
-                    createdAt = row[ApplicationTable.createdAt].toString(),
                     status = row[ApplicationTable.status],
+                    createdAt = row[ApplicationTable.createdAt].toString(),
                     message = row[ApplicationTable.message]
                 )
             }
+    }
+
+    override suspend fun updateApplicationStatuses() {
+        dbQuery {
+            val cutoffTime = LocalDateTime.now().minusMinutes(1)
+            val applications = ApplicationTable
+                .selectAll().where {
+                    ApplicationTable.createdAt lessEq cutoffTime and (ApplicationTable.status eq "Рассматривается")
+                }
+
+            applications.forEach { app ->
+                val newStatus = if (Random.nextBoolean()) "Принято" else "Отказано"
+                ApplicationTable.update({ ApplicationTable.id eq app[ApplicationTable.id] }) {
+                    it[status] = newStatus
+                }
+            }
+        }
+    }
+
+    override suspend fun updateVacancyIcon(vacancyId: Int, iconUrl: String?) {
+        dbQuery {
+            VacancyTable.update({ VacancyTable.id eq vacancyId }) {
+                it[icon] = iconUrl
+            }
+        }
     }
 }

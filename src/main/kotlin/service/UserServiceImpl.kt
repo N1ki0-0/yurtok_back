@@ -7,6 +7,7 @@ import com.example.security.hash
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
 
+
 // Реализация интерфейса UserService
 class UserServiceImpl : UserService {
     override suspend fun registerUser(params: CreateUserParams): User? {
@@ -44,5 +45,21 @@ class UserServiceImpl : UserService {
             password = row[UserTable.password], // Пароль (хеш)
             avatar = row[UserTable.avatar] // Аватар
         )
+    }
+
+    override suspend fun updateUserAvatar(userId: Int, avatar: String?) {
+        dbQuery {
+            UserTable.update({ UserTable.id eq userId }) {
+                it[UserTable.avatar] = avatar
+            }
+        }
+    }
+
+    override suspend fun findUserById(id: Int): User? {
+        return dbQuery {
+            UserTable.selectAll().where { UserTable.id eq id }
+                .mapNotNull { rowToUser(it) }
+                .singleOrNull()
+        }
     }
 }

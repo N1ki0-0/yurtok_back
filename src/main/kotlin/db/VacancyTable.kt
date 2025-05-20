@@ -4,7 +4,7 @@ import org.jetbrains.exposed.sql.Table
 
 object VacancyTable : Table("vacancies") {
     val id = integer("id").autoIncrement()
-    val icon = varchar("icon", 255)
+    val icon = varchar("icon", 255).nullable()
     val name = varchar("name", 100)
     val serviceType = varchar("service_type", 50)
     val serviceSubType = varchar("service_sub_type", 50)
